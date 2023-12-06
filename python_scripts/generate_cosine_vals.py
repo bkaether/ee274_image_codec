@@ -2,7 +2,7 @@ import numpy as np
 
 def float_to_fixed_point(num):
     # Constants for the number of bits
-    INTEGER_BITS = 8
+    INTEGER_BITS = 1
     FRACTIONAL_BITS = 8
     TOTAL_BITS = INTEGER_BITS + FRACTIONAL_BITS
 
@@ -12,7 +12,7 @@ def float_to_fixed_point(num):
     fractional_part = abs_num - integer_part
 
     # Convert the integer part to binary
-    integer_binary = format(integer_part, '08b')
+    integer_binary = format(integer_part, '01b')
 
     # Round and convert the fractional part to binary
     fractional_binary = format(round(fractional_part * (1 << FRACTIONAL_BITS)), '08b')
@@ -48,7 +48,7 @@ with open(filename, 'w') as file:
     for i in range(8):
         binary_row = []
         for j in range(8):
-            cosine_vals_float[i][j] = np.cos(2 * i + 1) * j * np.pi / (2 * 8)
+            cosine_vals_float[i][j] = np.cos((2 * i + 1) * j * np.pi / (2 * 8))
             fixed, representation = float_to_fixed_point(cosine_vals_float[i][j])
             binary_row.append(representation)
         # Write the row to the file

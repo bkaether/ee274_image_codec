@@ -7,9 +7,9 @@ module dct_2d #(
     input  wire clk,
     input  wire rst,
     input  wire start_block,
-    input  wire [15:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
+    input  wire signed [16:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.8
 
-    output reg  [31:0] dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
+    output reg  signed [31:0] dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
     output wire block_done;
 );
 
@@ -49,10 +49,10 @@ assign alpha_v = (v === 3'b000) ? root_one_over_n : root_two_over_n;
 
 
 // fixed point cosine values
-reg [31:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
+reg signed [8:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8
 
-reg [31:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
-reg [31:0] sum;
+reg signed [31:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
+reg signed [31:0] sum;
 
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin
