@@ -34,7 +34,7 @@ ffen u_ff (
 ffen v_ff (
     .clk(clk),
     .rst(rst),
-    .en(go),
+    .en(go | restart),
     .rst_val('0),
     .D(next_v),
 

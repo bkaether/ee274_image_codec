@@ -9,7 +9,7 @@ module dct_2d #(
     input  wire start_block,
     input  wire signed [16:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
-    output reg  signed [51:0] dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
+    output reg  signed [51:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
     output wire block_done;
 );
 
@@ -62,6 +62,9 @@ reg signed [26:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8 * Q1.8 *
 // add integer bits to accumulate values - Q18.16
 reg signed [33:0] sum;
 
+wire signed [51:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
+reg  signed [51:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
+
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin
         for (int y = 0; y < BLOCK_SIZE; y = y + 1) begin
@@ -88,6 +91,27 @@ always_comb begin
           
     dct_block[u][v] = alpha_u * alpha_v * sum;
 end
+
+generate
+    genvar i, j;
+    for (i = 0; i < BLOCK_SIZE; i = i + 1) begin
+        for (j = 0; i < BLOCK_SIZE; j = j + 1) begin
+            assign nxt_dct_block[i][j] = dct_block[i][i];
+
+            ff_en #(
+                .WIDTH(52)
+            ) dct_ff (
+                .clk(clk),
+                .rst(rst),
+                .en((u === i) & (v === j)),
+                .rst_val('0),
+                .D(nxt_dct_block[i][j]),
+
+                .Q(dct_block_out[i][j])
+            );
+        end
+    end
+endgenerate
 
 double_counter double_counter_i (
     .clk(clk),
