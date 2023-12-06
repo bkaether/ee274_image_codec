@@ -1,4 +1,5 @@
 import numpy as np
+from dct import *
 
 def parse_mem_file_to_array(file_path, fractional_bits):
     """
@@ -50,3 +51,5 @@ fractional_bits = 32  # Replace with the number of fractional bits you need
 array = parse_mem_file_to_array(file_path, fractional_bits)
 np.set_printoptions(suppress=True, precision=4)
 print(array)
+# compressed_block = np.round(array / rounded_quantization_matrix)
+# decompressed_block = decompress_block(compressed_block, quantization_matrix)

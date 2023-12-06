@@ -41,6 +41,7 @@ def float_to_fixed_point(num):
     return fixed_point_value, binary_representation
 
 cosine_vals_float = np.zeros((8, 8))
+cosine_vals_fixed = np.zeros((8, 8))
 
 filename = "../memfiles/cosine_vals.mem"
 
@@ -50,9 +51,12 @@ with open(filename, 'w') as file:
         for j in range(8):
             cosine_vals_float[i][j] = np.cos((2 * i + 1) * j * np.pi / (2 * 8))
             fixed, representation = float_to_fixed_point(cosine_vals_float[i][j])
+            cosine_vals_fixed[i][j] = fixed
             binary_row.append(representation)
         # Write the row to the file
         file.write('\t'.join(binary_row) + '\n')
+
+print(cosine_vals_fixed)
 
 
         
