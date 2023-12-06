@@ -7,9 +7,9 @@ module dct_2d #(
     input  wire clk,
     input  wire rst,
     input  wire start_block,
-    input  wire signed [16:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.8
+    input  wire signed [16:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
-    output reg  signed [31:0] dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
+    output reg  signed [51:0] dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
     output wire block_done;
 );
 
@@ -19,30 +19,36 @@ module dct_2d #(
 `define STATE_DONE        2'b10
 
 // define values to be used for alpha_u and alpha_v from gold software model ( 8.8 fixed point)
-wire [15:0] root_one_over_n;
-wire [15:0] root_two_over_n;
-assign root_one_over_n = 16'h00_5b; // = ~0.3536
-assign root_two_over_n = 16'h00_80; // = 0.5
+wire [8:0] root_one_over_n;
+wire [8:0] root_two_over_n;
+assign root_one_over_n = 9'b0_01011011; // = ~0.3536
+assign root_two_over_n = 9'b0_10000000; // = 0.5
 
 // state signals
 wire [1:0] next_state;
 reg  [1:0] state;
 
-// double counter signals
-// inputs
+// double counter inputs
+wire restart;
+wire go;
 
-// outputs
+assign restart = (state === STATE_IDLE);
+assign go = (state === STATE_CALCULATING);
+
+// double counter outputs
 wire done;
 wire [2:0] u;
 wire [2:0] v;
 
 assign next_state = (state === STATE_IDLE)        ? (start_block ? STATE_CALCULATING : STATE_IDLE) :
                     (state === STATE_CALCULATING) ? (done        ? STATE_DONE : STATE_CALCULATING) :
-                    (state === STATE_DONE)        ?  STATE_IDLE
+                    (state === STATE_DONE)        ?  STATE_IDLE : STATE_IDLE;
+
+assign block_done = (state === STATE_DONE);
 
 // alpha values for dct calculation
-wire [15:0] alpha_u;
-wire [15:0] alpha_v;
+wire signed [8:0] alpha_u; // Q1.8
+wire signed [8:0] alpha_v; // Q1.8
 
 assign alpha_u = (u === 3'b000) ? root_one_over_n : root_two_over_n;
 assign alpha_v = (v === 3'b000) ? root_one_over_n : root_two_over_n;
@@ -51,8 +57,10 @@ assign alpha_v = (v === 3'b000) ? root_one_over_n : root_two_over_n;
 // fixed point cosine values
 reg signed [8:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8
 
-reg signed [31:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
-reg signed [31:0] sum;
+reg signed [26:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8 * Q1.8 * Q9.0 = Q11.16
+
+// add integer bits to accumulate values - Q18.16
+reg signed [33:0] sum;
 
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin
