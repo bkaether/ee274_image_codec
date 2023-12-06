@@ -4,8 +4,8 @@ module dct_2d_tb();
     reg start_block;
     reg signed [8:0] block [7:0][7:0];
 
-    wire signed [51:0] dct_block_out [7:0][7:0];
-    wire block_done;
+    reg signed [51:0] dct_block_out [7:0][7:0];
+    reg block_done;
 
     always #5 clk = ~clk;
 

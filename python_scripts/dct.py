@@ -78,8 +78,16 @@ def process_image(image, quantization_matrix):
             decompressed[i:i+8, j:j+8] = np.clip(decompressed_block, 0, 255)
     return compressed, decompressed
 
+def compress_first_block(image):
+    block = image[0:8, 0:8]
+    dct_block = dct_2d(block)
+    print(dct_block)
+
 # Load grayscale image
 image = cv2.imread('../image_data/raw/river.jpg', cv2.IMREAD_GRAYSCALE)
+
+np.set_printoptions(suppress=True, precision=4)
+compress_first_block(image)
 
 # Define a simple quantization matrix
 quantization_matrix = np.array([[16, 11, 10, 16, 24, 40, 51, 61],
