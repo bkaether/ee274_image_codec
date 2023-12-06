@@ -5,9 +5,9 @@ module ff_en #(
     input wire rst_n,
     input wire en,
     input wire [WIDTH-1:0] rst_val,
-    input wire [WIDTH-1:0] D;
+    input wire [WIDTH-1:0] D,
 
-    output reg [WIDTH-1:0] Q;
+    output reg [WIDTH-1:0] Q
 );
 
 always_ff @(posedge clk) begin

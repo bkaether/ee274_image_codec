@@ -17,7 +17,7 @@ reg [2:0] v_r;
 wire [2:0] next_u;
 wire [2:0] next_v;
 
-assign next_u = restart ? '0 : (u_r + 1);
+assign next_u = restart ? '0 : ((v_r === 3'b111) ? (u_r + 1) : u_r);
 assign next_v = restart ? '0 : (v_r + 1);
 assign done = (u === 3'b111) & (v === 3'b111);
 
