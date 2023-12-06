@@ -20,7 +20,8 @@ module dct_2d_tb();
     );
 
     initial begin
-        $readmemb("../memfiles/first_block.mem", block);
+        $readmemb("first_block.mem", block);
+        #50
         $display("Test finished");
         $finish();
     end

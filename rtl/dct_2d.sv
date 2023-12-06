@@ -95,7 +95,7 @@ end
 generate
     genvar i, j;
     for (i = 0; i < BLOCK_SIZE; i = i + 1) begin
-        for (j = 0; i < BLOCK_SIZE; j = j + 1) begin
+        for (j = 0; j < BLOCK_SIZE; j = j + 1) begin
             assign nxt_dct_block[i][j] = dct_block[i][i];
 
             ff_en #(
@@ -137,7 +137,7 @@ ff_en #(
 );
 
 initial begin
-    $readmemb("../memfiles/cosine_vals.mem", cosine_vals);
+    $readmemb("cosine_vals.mem", cosine_vals);
 end
     
 endmodule
