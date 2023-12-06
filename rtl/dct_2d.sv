@@ -96,7 +96,7 @@ generate
     genvar i, j;
     for (i = 0; i < BLOCK_SIZE; i = i + 1) begin
         for (j = 0; j < BLOCK_SIZE; j = j + 1) begin
-            assign nxt_dct_block[i][j] = dct_block[i][i];
+            assign nxt_dct_block[i][j] = dct_block[i][j];
 
             ff_en #(
                 .WIDTH(52)
@@ -130,7 +130,7 @@ ff_en #(
     .clk(clk),
     .rst_n(rst_n),
     .en(1'b1),
-    .rst_val(STATE_IDLE),
+    .rst_val(`STATE_IDLE),
     .D(next_state),
 
     .Q(state)
