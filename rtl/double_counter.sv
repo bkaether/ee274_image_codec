@@ -1,8 +1,8 @@
-`include "ff.sv"
+`include "ff_en.sv"
 
 module double_counter (
     input wire clk,
-    input wire rst,
+    input wire rst_n,
     input wire restart,
     input wire go,
 
@@ -21,19 +21,22 @@ assign next_u = restart ? '0 : ((v_r === 3'b111) ? (u_r + 1) : u_r);
 assign next_v = restart ? '0 : (v_r + 1);
 assign done = (u === 3'b111) & (v === 3'b111);
 
-ffen u_ff (
+assign u = u_r;
+assign v = v_r;
+
+ff_en u_ff (
     .clk(clk),
-    .rst(rst),
-    .en(go),
+    .rst_n(rst_n),
+    .en(go | restart),
     .rst_val('0),
     .D(next_u),
 
     .Q(u_r)
 );
 
-ffen v_ff (
+ff_en v_ff (
     .clk(clk),
-    .rst(rst),
+    .rst_n(rst_n),
     .en(go | restart),
     .rst_val('0),
     .D(next_v),

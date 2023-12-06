@@ -10,7 +10,7 @@ module ff_en #(
     output reg [WIDTH-1:0] Q
 );
 
-always_ff @(posedge clk, negedge rst) begin
+always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n) begin
         Q = rst_val;
     end else if (en) begin

@@ -9,8 +9,8 @@ module dct_2d #(
     input  wire start_block,
     input  wire signed [16:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
-    output reg  signed [51:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
-    output wire block_done;
+    output reg  signed [51:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q18.16 + Q1.8 + Q1.8 = Q20.32
+    output wire block_done
 );
 
 // define states
@@ -32,19 +32,19 @@ reg  [1:0] state;
 wire restart;
 wire go;
 
-assign restart = (state === STATE_IDLE);
-assign go = (state === STATE_CALCULATING);
+assign restart = (state === `STATE_IDLE);
+assign go = (state === `STATE_CALCULATING);
 
 // double counter outputs
 wire done;
 wire [2:0] u;
 wire [2:0] v;
 
-assign next_state = (state === STATE_IDLE)        ? (start_block ? STATE_CALCULATING : STATE_IDLE) :
-                    (state === STATE_CALCULATING) ? (done        ? STATE_DONE : STATE_CALCULATING) :
-                    (state === STATE_DONE)        ?  STATE_IDLE : STATE_IDLE;
+assign next_state = (state === `STATE_IDLE)        ? (start_block ? `STATE_CALCULATING : `STATE_IDLE) :
+                    (state === `STATE_CALCULATING) ? (done        ? `STATE_DONE : `STATE_CALCULATING) :
+                    (state === `STATE_DONE)        ?  `STATE_IDLE : `STATE_IDLE;
 
-assign block_done = (state === STATE_DONE);
+assign block_done = (state === `STATE_DONE);
 
 // alpha values for dct calculation
 wire signed [8:0] alpha_u; // Q1.8
@@ -62,8 +62,8 @@ reg signed [26:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8 * Q1.8 *
 // add integer bits to accumulate values - Q18.16
 reg signed [33:0] sum;
 
-wire signed [51:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
-reg  signed [51:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0] // Q18.16 + Q1.8 + Q1.8 = Q20.32
+wire signed [51:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
+reg  signed [51:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
 
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin
@@ -137,7 +137,7 @@ ff_en #(
 );
 
 initial begin
-    $readmemh("../memfiles/cosine_vals.mem", cosine_vals)
+    $readmemh("../memfiles/cosine_vals.mem", cosine_vals);
 end
     
 endmodule
