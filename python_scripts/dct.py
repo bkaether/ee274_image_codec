@@ -92,19 +92,19 @@ quantization_matrix = np.array([[16, 11, 10, 16, 24, 40, 51, 61],
                                 [72, 92, 95, 98, 112, 100, 103, 99]])
 
 rounded_quantization_matrix = round_quantization_matrix(quantization_matrix)
-print(rounded_quantization_matrix)
-print("\nMax Value in Grayscale Image: ", np.max(image))
-print("\nMin Value in Grayscale Image: ", np.min(image))
+# print(rounded_quantization_matrix)
+# print("\nMax Value in Grayscale Image: ", np.max(image))
+# print("\nMin Value in Grayscale Image: ", np.min(image))
 
 # compressed, decompressed = process_image(image, quantization_matrix)
 
 compressed_rounded, decompressed_rounded = process_image(image, rounded_quantization_matrix)
 
-print("\nMax Value in Compressed Image: ", np.max(compressed_rounded))
-print("\nMin Value in Compressed Image: ", np.min(compressed_rounded))
+# print("\nMax Value in Compressed Image: ", np.max(compressed_rounded))
+# print("\nMin Value in Compressed Image: ", np.min(compressed_rounded))
 
-print("\nMax Value in Decompressed Image: ", np.max(decompressed_rounded))
-print("\nMin Value in Decompressed Image: ", np.min(decompressed_rounded))
+# print("\nMax Value in Decompressed Image: ", np.max(decompressed_rounded))
+# print("\nMin Value in Decompressed Image: ", np.min(decompressed_rounded))
 
 # Save or display the decompressed image
 cv2.imwrite('../image_data/decompressed/river_rounded.jpg', decompressed_rounded)

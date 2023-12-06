@@ -5,9 +5,9 @@ module dct_2d #(
     parameter BLOCK_SIZE = 8
 ) (
     input  wire clk,
-    input  wire rst,
+    input  wire rst_n,
     input  wire start_block,
-    input  wire signed [16:0] block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
+    input  wire signed [8:0]  block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
     output reg  signed [51:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q18.16 + Q1.8 + Q1.8 = Q20.32
     output wire block_done
@@ -102,7 +102,7 @@ generate
                 .WIDTH(52)
             ) dct_ff (
                 .clk(clk),
-                .rst(rst),
+                .rst_n(rst_n),
                 .en((u === i) & (v === j)),
                 .rst_val('0),
                 .D(nxt_dct_block[i][j]),
@@ -115,7 +115,7 @@ endgenerate
 
 double_counter double_counter_i (
     .clk(clk),
-    .rst(rst),
+    .rst_n(rst_n),
     .restart(restart),
     .go(go),
 
@@ -128,7 +128,7 @@ ff_en #(
     .WIDTH(2)
 ) state_ff (
     .clk(clk),
-    .rst(rst),
+    .rst_n(rst_n),
     .en(1'b1),
     .rst_val(STATE_IDLE),
     .D(next_state),
@@ -137,7 +137,7 @@ ff_en #(
 );
 
 initial begin
-    $readmemh("../memfiles/cosine_vals.mem", cosine_vals);
+    $readmemb("../memfiles/cosine_vals.mem", cosine_vals);
 end
     
 endmodule
