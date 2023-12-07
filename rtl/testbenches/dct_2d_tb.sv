@@ -33,7 +33,7 @@ module dct_2d_tb();
         #20
         start_block <= 0;
         #700
-        $writememh("b1_comp_out_hw.mem", dct_block_out);
+        $writememh("../../../../../github/ee274_image_codec/memfiles/hw_output/b1_comp_out_hw.mem", dct_block_out);
         $display("Test finished");
         $finish();
     end
