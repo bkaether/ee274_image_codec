@@ -23,7 +23,7 @@ module compress_block #(
         .start_block(start_block),
         .block(block),
 
-        .dct_block_out(dct_block_out)
+        .dct_block_out(dct_block_out),
         .block_done(block_done)
     );
 
