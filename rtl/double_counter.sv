@@ -24,7 +24,9 @@ assign done = (u === 3'b111) & (v === 3'b111);
 assign u = u_r;
 assign v = v_r;
 
-ff_en u_ff (
+ff_en #(
+    .WIDTH(3)
+) u_ff (
     .clk(clk),
     .rst_n(rst_n),
     .en(go | restart),
@@ -34,7 +36,9 @@ ff_en u_ff (
     .Q(u_r)
 );
 
-ff_en v_ff (
+ff_en #(
+    .WIDTH(3)
+) v_ff (
     .clk(clk),
     .rst_n(rst_n),
     .en(go | restart),

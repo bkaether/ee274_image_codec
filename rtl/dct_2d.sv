@@ -2,14 +2,15 @@
 `include "double_counter.sv"
 
 module dct_2d #(
-    parameter BLOCK_SIZE = 8
+    parameter BLOCK_SIZE = 8,
+    parameter DCT_OUT_WIDTH = 52
 ) (
     input  wire clk,
     input  wire rst_n,
     input  wire start_block,
     input  wire signed [8:0]  block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
-    output reg  signed [51:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q18.16 + Q1.8 + Q1.8 = Q20.32
+    output reg  signed [DCT_OUT_WIDTH-1:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q18.16 + Q1.8 + Q1.8 = Q20.32
     output wire block_done
 );
 
@@ -62,8 +63,8 @@ reg signed [26:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8 * Q1.8 *
 // add integer bits to accumulate values - Q18.16
 reg signed [33:0] sum;
 
-wire signed [51:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
-reg  signed [51:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
+wire signed [DCT_OUT_WIDTH-1:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
+reg  signed [DCT_OUT_WIDTH-1:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
 
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin
@@ -99,7 +100,7 @@ generate
             assign nxt_dct_block[i][j] = dct_block[i][j];
 
             ff_en #(
-                .WIDTH(52)
+                .WIDTH(DCT_OUT_WIDTH)
             ) dct_ff (
                 .clk(clk),
                 .rst_n(rst_n),
