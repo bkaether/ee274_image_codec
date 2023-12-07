@@ -82,6 +82,7 @@ def compress_first_block(image):
     block = image[0:8, 0:8]
     dct_block = dct_2d(block)
     print(dct_block)
+    return dct_block
 
 # Load grayscale image
 image = cv2.imread('../image_data/raw/river.jpg', cv2.IMREAD_GRAYSCALE)
@@ -105,9 +106,15 @@ rounded_quantization_matrix = round_quantization_matrix(quantization_matrix)
 # print("\nMax Value in Grayscale Image: ", np.max(image))
 # print("\nMin Value in Grayscale Image: ", np.min(image))
 
-# compressed, decompressed = process_image(image, quantization_matrix)
+compressed, decompressed = process_image(image, quantization_matrix)
 
 compressed_rounded, decompressed_rounded = process_image(image, rounded_quantization_matrix)
+
+mse = np.mean((image - decompressed) ** 2)
+mse_rounded = np.mean((image - decompressed_rounded) ** 2)
+
+print("MSE between raw and reconstructed image with normal matrix:\n", mse)
+print("MSE between raw and reconstructed image with rounded matrix:\n", mse_rounded)
 
 # print("\nMax Value in Compressed Image: ", np.max(compressed_rounded))
 # print("\nMin Value in Compressed Image: ", np.min(compressed_rounded))
@@ -116,7 +123,7 @@ compressed_rounded, decompressed_rounded = process_image(image, rounded_quantiza
 # print("\nMin Value in Decompressed Image: ", np.min(decompressed_rounded))
 
 # Save or display the decompressed image
-# cv2.imwrite('../image_data/decompressed/river.jpg', decompressed)
+cv2.imwrite('../image_data/decompressed/river.jpg', decompressed)
 cv2.imwrite('../image_data/decompressed/river_rounded.jpg', decompressed_rounded)
 # cv2.imshow('Decompressed Image', decompressed)
 # cv2.waitKey(0)
