@@ -54,7 +54,6 @@ wire signed [8:0] alpha_v; // Q1.8
 assign alpha_u = (u === 3'b000) ? root_one_over_n : root_two_over_n;
 assign alpha_v = (v === 3'b000) ? root_one_over_n : root_two_over_n;
 
-
 // fixed point cosine values
 reg signed [8:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8
 
