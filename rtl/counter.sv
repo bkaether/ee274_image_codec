@@ -1,5 +1,6 @@
 module counter #(
-    parameter WIDTH = 9
+    parameter WIDTH = 8,
+    parameter MAX_COUNT = 60
 ) (
     input wire clk,
     input wire rst_n,
@@ -14,7 +15,7 @@ module counter #(
     wire [WIDTH-1:0] nxt_count;
 
     assign nxt_count = restart ? '0 : (count_r + 1);
-    assign done = (count === '1);
+    assign done = (count === MAX_COUNT);
 
     assign count = count_r;
 
