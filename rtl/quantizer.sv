@@ -14,7 +14,8 @@ module quantizer #(
         genvar i, j;
         for (i = 0; i < BLOCK_SIZE; i = i + 1) begin
             for (j = 0; j < BLOCK_SIZE; j = j + 1) begin
-                assign quantized_coeffs[i][j] = (dct_block_out[i][i] >>> shift_values[i][j]);
+                wire signed [DCT_OUT_WIDTH-1:0] unrounded = (dct_block_out[i][j] >>> (shift_values[i][j] + 31));
+                assign quantized_coeffs[i][j] = unrounded[0] ? ((unrounded >>> 1) + 1) : (unrounded >>> 1);
             end
         end
     endgenerate

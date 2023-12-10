@@ -31,6 +31,7 @@ module compress_block #(
         .BLOCK_SIZE(BLOCK_SIZE),
         .DCT_OUT_WIDTH(DCT_OUT_WIDTH)
     ) quantizer_i (
+        .dct_block_out(dct_block_out),
         .quantized_coeffs(quantized_coeffs)
     );
     

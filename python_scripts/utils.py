@@ -47,6 +47,39 @@ def mem_to_ndarray(file_path, fractional_bits, rows, cols):
 
     return decimal_array
 
+def mem_2d_to_ndarray(file_path, rows, cols):
+    """
+    Parses a 2D .mem file where each line contains multiple binary values separated by tabs,
+    and converts these values to a numpy array.
+
+    Args:
+    - file_path (str): Path to the .mem file
+    - rows (int): Expected number of rows in the .mem file
+    - cols (int): Expected number of columns in the .mem file
+
+    Returns:
+    - numpy.ndarray: 2D numpy array of the same shape as the .mem file,
+                     containing decimal representations of the binary values
+    """
+
+    # Initialize an empty list to store the rows
+    data = []
+
+    # Open and read the file
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Split the line into binary values
+            binary_values = line.strip().split('\t')
+
+            # Convert each binary value to decimal
+            decimal_values = [int(value, 2) for value in binary_values]
+            data.append(decimal_values)
+
+    # Convert the list to a 2D numpy array
+    array = np.array(data).reshape(rows, cols)
+
+    return array
+
 def float_to_fixed_point(num, integer_bits, fractional_bits):
     # Total number of bits (integer + fractional)
     total_bits = integer_bits + fractional_bits
