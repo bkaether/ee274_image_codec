@@ -3,7 +3,7 @@ module compressor_top #(
     parameter IMG_COLS = 640,
     parameter BLOCK_SIZE = 8,
     parameter LOG2_BLOCK_SIZE = 3,
-    parameter DCT_OUT_WIDTH = 52,
+    parameter DCT_OUT_WIDTH = 54,
     parameter ROW_CTR_WIDTH = 9
 ) (
     input  wire clk,
@@ -21,8 +21,6 @@ module compressor_top #(
 
     localparam NUM_BLOCKS_IN_ROW = (IMG_COLS >> LOG2_BLOCK_SIZE);
     localparam NUM_BLOCKS_IN_COL = (IMG_ROWS >> LOG2_BLOCK_SIZE);
-    // localparam NUM_BLOCKS_IN_ROW = 1;
-    // localparam NUM_BLOCKS_IN_COL = 1;
 
     // state signals
     wire [1:0] nxt_state;

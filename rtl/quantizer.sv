@@ -1,6 +1,6 @@
 module quantizer #(
     parameter BLOCK_SIZE = 8,
-    parameter DCT_OUT_WIDTH = 52
+    parameter DCT_OUT_WIDTH = 54
 ) (
     input signed [DCT_OUT_WIDTH-1:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
 

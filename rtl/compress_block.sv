@@ -1,6 +1,6 @@
 module compress_block #(
     parameter BLOCK_SIZE = 8,
-    parameter DCT_OUT_WIDTH = 52
+    parameter DCT_OUT_WIDTH = 54
 ) (
     input  wire clk,
     input  wire rst_n,

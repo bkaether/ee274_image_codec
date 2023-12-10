@@ -9,7 +9,7 @@ shift_file_path = "../memfiles/quantization.mem"
 fractional_bits = 0
 first_block_coeffs = mem_to_ndarray(block1_coeffs_file_path, fractional_bits, 8, 8)
 full_image_coeffs = mem_to_ndarray(full_coeffs_file_path, fractional_bits, 480, 640)
-first_block_dct = mem_to_ndarray(dct_out_file_path, fractional_bits, 8, 8)
+first_block_dct = mem_to_ndarray(dct_out_file_path, 32, 8, 8)
 shift_values = mem_2d_to_ndarray(shift_file_path, 8, 8)
 np.set_printoptions(suppress=True, precision=4)
 image = cv2.imread('../image_data/raw/river.jpg', cv2.IMREAD_GRAYSCALE)

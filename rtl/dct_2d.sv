@@ -3,14 +3,14 @@
 
 module dct_2d #(
     parameter BLOCK_SIZE = 8,
-    parameter DCT_OUT_WIDTH = 52
+    parameter DCT_OUT_WIDTH = 54
 ) (
     input  wire clk,
     input  wire rst_n,
     input  wire start_block,
     input  wire signed [8:0]  block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
-    output reg  signed [DCT_OUT_WIDTH-1:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q18.16 + Q1.8 + Q1.8 = Q20.32
+    output reg  signed [DCT_OUT_WIDTH-1:0] dct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q20.16 + Q1.8 + Q1.8 = Q22.32
     output wire block_done
 );
 
@@ -55,15 +55,15 @@ assign alpha_u = (u === 3'b000) ? root_one_over_n : root_two_over_n;
 assign alpha_v = (v === 3'b000) ? root_one_over_n : root_two_over_n;
 
 // fixed point cosine values
-reg signed [8:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8
+reg signed [9:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q2.8
 
-reg signed [26:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q1.8 * Q1.8 * Q9.0 = Q11.16
+reg signed [26:0] sum_values  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q2.8 * Q2.8 * Q9.0 = Q13.16
 
-// add integer bits to accumulate values - Q18.16
-reg signed [33:0] sum;
+// add integer bits to accumulate values - Q20.16
+reg signed [35:0] sum;
 
-wire signed [DCT_OUT_WIDTH-1:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
-reg  signed [DCT_OUT_WIDTH-1:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
+wire signed [DCT_OUT_WIDTH-1:0] nxt_dct_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q20.16 + Q1.8 + Q1.8 = Q22.32
+reg  signed [DCT_OUT_WIDTH-1:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q20.16 + Q1.8 + Q1.8 = Q22.32
 
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin

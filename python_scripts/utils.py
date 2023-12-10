@@ -138,7 +138,7 @@ def generate_fixed_cosine_mem(filename, blocksize=8):
             row_str = []
             for j in range(blocksize):
                 cosine_vals_float[i][j] = np.cos((2 * i + 1) * j * np.pi / (2 * 8))
-                fixed, representation = float_to_fixed_point(cosine_vals_float[i][j], 1, 8)
+                fixed, representation = float_to_fixed_point(cosine_vals_float[i][j], 2, 8)
                 cosine_vals_fixed[i][j] = fixed
                 row_str.append(representation)
             # Write the row to the file
