@@ -47,30 +47,30 @@ module compressor_top #(
     assign img_done = (state === `STATE_DONE);
 
     // genvar i, j, k, x, y;
-    genvar i, j, ii, jj, x, y;
+    genvar i, j, ii, jj;
 
-    wire signed [DCT_OUT_WIDTH-1:0] nxt_quantized_coeffs [IMG_ROWS-1:0][IMG_COLS-1:0];
+    // wire signed [DCT_OUT_WIDTH-1:0] nxt_quantized_coeffs [IMG_ROWS-1:0][IMG_COLS-1:0];
 
     // flops for final image
-    generate
-        for (x = 0; x < IMG_ROWS; x = x + 1) begin
-            for (y = 0; x < IMG_COLS; y = y + 1) begin
-                assign nxt_quantized_coeffs[x][y] = 
+    // generate
+    //     for (x = 0; x < IMG_ROWS; x = x + 1) begin
+    //         for (y = 0; x < IMG_COLS; y = y + 1) begin
+    //             assign nxt_quantized_coeffs[x][y] = 
 
-                ff_en #(
-                    .WIDTH(DCT_OUT_WIDTH)
-                ) dct_ff (
-                    .clk(clk),
-                    .rst_n(rst_n),
-                    .en(),
-                    .rst_val('0),
-                    .D(nxt_quantized_coeffs[i][j]),
+    //             ff_en #(
+    //                 .WIDTH(DCT_OUT_WIDTH)
+    //             ) dct_ff (
+    //                 .clk(clk),
+    //                 .rst_n(rst_n),
+    //                 .en(),
+    //                 .rst_val('0),
+    //                 .D(nxt_quantized_coeffs[i][j]),
 
-                    .Q(quantized_coeffs_out[i][j])
-                );
-            end
-        end
-    endgenerate
+    //                 .Q(quantized_coeffs_out[i][j])
+    //             );
+    //         end
+    //     end
+    // endgenerate
 
     // dct block cores
     wire start_blocks;
@@ -109,12 +109,13 @@ module compressor_top #(
         for (i = 0; i < (NUM_BLOCKS_IN_ROW); i = i + 1) begin
             for (j = 0; j < (NUM_BLOCKS_IN_COL); j = j + 1) begin
 
-                wire signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
+                wire signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q9.0
                 wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
 
                 for (ii = 0; ii < BLOCK_SIZE; ii = ii + 1) begin
                     for (jj = 0; jj < BLOCK_SIZE; jj = jj + 1) begin
                         assign block[ii][jj] = image[(i*BLOCK_SIZE) + ii][(j*BLOCK_SIZE)+jj];
+                        assign quantized_coeffs_out[(i*BLOCK_SIZE) + ii][(j*BLOCK_SIZE)+jj] = quantized_coeffs[ii][jj];
                     end
                 end
 
@@ -128,7 +129,7 @@ module compressor_top #(
                     .block(block),
 
                     .quantized_coeffs(quantized_coeffs),
-                    .block_done(blocks_done[i][j])
+                    .block_done(block_done[i][j])
                 );
             end
         end
