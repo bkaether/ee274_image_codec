@@ -27,6 +27,9 @@ compressed, decompressed = process_image(image, quantization_matrix)
 
 compressed_rounded, decompressed_rounded = process_image(image, rounded_quantization_matrix)
 
+comp_round_separate = compress_image(image, rounded_quantization_matrix)
+decomp_round_separate = decompress_image(comp_round_separate, rounded_quantization_matrix)
+
 mse = np.mean((image - decompressed) ** 2)
 mse_rounded = np.mean((image - decompressed_rounded) ** 2)
 
@@ -36,3 +39,4 @@ mse_rounded = np.mean((image - decompressed_rounded) ** 2)
 # Save or display the decompressed image
 cv2.imwrite('../image_data/decompressed/river.jpg', decompressed)
 cv2.imwrite('../image_data/decompressed/river_rounded.jpg', decompressed_rounded)
+cv2.imwrite('../image_data/decompressed/river_rounded_separate.jpg', decomp_round_separate)

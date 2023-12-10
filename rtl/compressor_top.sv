@@ -19,8 +19,10 @@ module compressor_top #(
     `define STATE_CALCULATING 2'b01
     `define STATE_DONE        2'b10
 
-    localparam NUM_BLOCKS_IN_ROW = (IMG_COLS >> BLOCK_SIZE);
-    localparam NUM_BLOCKS_IN_COL = (IMG_ROWS >> BLOCK_SIZE);
+    localparam NUM_BLOCKS_IN_ROW = (IMG_COLS >> LOG2_BLOCK_SIZE);
+    localparam NUM_BLOCKS_IN_COL = (IMG_ROWS >> LOG2_BLOCK_SIZE);
+    // localparam NUM_BLOCKS_IN_ROW = 1;
+    // localparam NUM_BLOCKS_IN_COL = 1;
 
     // state signals
     wire [1:0] nxt_state;
@@ -106,8 +108,8 @@ module compressor_top #(
     // endgenerate
 
     generate
-        for (i = 0; i < (NUM_BLOCKS_IN_ROW); i = i + 1) begin
-            for (j = 0; j < (NUM_BLOCKS_IN_COL); j = j + 1) begin
+        for (i = 0; i < (NUM_BLOCKS_IN_COL); i = i + 1) begin
+            for (j = 0; j < (NUM_BLOCKS_IN_ROW); j = j + 1) begin
 
                 wire signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q9.0
                 wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32

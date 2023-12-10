@@ -59,6 +59,26 @@ def process_image(image, quantization_matrix):
             decompressed[i:i+8, j:j+8] = np.clip(decompressed_block, 0, 255)
     return compressed, decompressed
 
+def compress_image(image, quantization_matrix):
+    h, w = image.shape
+    coefficients = np.zeros_like(image, dtype=np.float32)
+    for i in range(0, h, 8):
+        for j in range(0, w, 8):
+            block = image[i:i+8, j:j+8]
+            compressed_block = compress_block(block, quantization_matrix)
+            coefficients[i:i+8, j:j+8] = compressed_block
+    return coefficients
+
+def decompress_image(coefficients, quantization_matrix):
+    h, w = coefficients.shape
+    decompressed_image = np.zeros_like(coefficients, dtype=np.uint8)
+    for i in range(0, h, 8):
+        for j in range(0, w, 8):
+            compressed_block = coefficients[i:i+8, j:j+8]
+            decompressed_block = decompress_block(compressed_block, quantization_matrix)
+            decompressed_image[i:i+8, j:j+8] = np.clip(decompressed_block, 0, 255)
+    return decompressed_image
+
 def compress_first_block(image):
     block = image[0:8, 0:8]
     dct_block = dct_2d(block)

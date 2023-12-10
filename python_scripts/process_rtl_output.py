@@ -2,11 +2,13 @@ import numpy as np
 from utils import *
 from codec import *
 
-coeffs_file_path = "../memfiles/hw_output/b1_coeffs_out_hw.mem"
+block1_coeffs_file_path = "../memfiles/hw_output/b1_coeffs_out_hw.mem"
+full_coeffs_file_path = "../memfiles/hw_output/full_image_comp_out_hw.mem"
 dct_out_file_path = "../memfiles/hw_output/b1_comp_out_hw.mem"
 shift_file_path = "../memfiles/quantization.mem"
-fractional_bits = 32
-first_block_coeffs = mem_to_ndarray(coeffs_file_path, 0, 8, 8)
+fractional_bits = 0
+first_block_coeffs = mem_to_ndarray(block1_coeffs_file_path, fractional_bits, 8, 8)
+full_image_coeffs = mem_to_ndarray(full_coeffs_file_path, fractional_bits, 480, 640)
 first_block_dct = mem_to_ndarray(dct_out_file_path, fractional_bits, 8, 8)
 shift_values = mem_2d_to_ndarray(shift_file_path, 8, 8)
 np.set_printoptions(suppress=True, precision=4)
@@ -24,13 +26,15 @@ quantization_matrix = np.array([[16, 11, 10, 16, 24, 40, 51, 61],
 rounded_quantization_matrix = round_matrix(quantization_matrix)
 
 python_output = compress_block(image[0:8, 0:8], rounded_quantization_matrix)
-mse = np.mean((first_block_coeffs - python_output) ** 2)
+# mse = np.mean((first_block_coeffs - python_output) ** 2)
 
-print("\nRTL First Block DCT Output:\n", first_block_dct)
-print("\nRTL shift values:\n", shift_values)
+# print("\nRTL First Block DCT Output:\n", first_block_dct)
+# print("\nRTL shift values:\n", shift_values)
 print("\nRTL First Block Coeffs Output:\n", first_block_coeffs)
 print("\nPython First Block Output:\n", python_output)
 
 # print(mse)
 # compressed_block = np.round(first_block_coeffs / rounded_quantization_matrix)
 # decompressed_block = decompress_block(compressed_block, quantization_matrix)
+decompressed_image = decompress_image(full_image_coeffs, rounded_quantization_matrix)
+cv2.imwrite('../image_data/decompressed/hw/river.jpg', decompressed_image)
