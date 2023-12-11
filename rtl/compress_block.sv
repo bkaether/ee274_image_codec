@@ -1,13 +1,14 @@
 module compress_block #(
     parameter BLOCK_SIZE = 8,
-    parameter DCT_OUT_WIDTH = 54
+    parameter DCT_OUT_WIDTH = 54,
+    parameter COEFF_WIDTH = 9
 ) (
     input  wire clk,
     input  wire rst_n,
     input  wire start_block,
     input  wire signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
 
-    output wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
+    output wire signed [COEFF_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
     output wire block_done
 );
 

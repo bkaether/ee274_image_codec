@@ -1,13 +1,14 @@
 module idct_2d #(
     parameter BLOCK_SIZE = 8,
-    parameter DCT_OUT_WIDTH = 54
+    parameter COEFF_WIDTH = 9,
+    parameter RECONST_OUT_WIDTH = 54
 ) (
     input  wire clk,
     input  wire rst_n,
     input  wire start_block,
-    input  wire signed [DCT_OUT_WIDTH-1:0] dequantized_coeffs  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
+    input  wire signed [COEFF_WIDTH+6:0] dequantized_coeffs  [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
 
-    output reg signed [DCT_OUT_WIDTH-1:0] reconstructed_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
+    output reg signed [RECONST_OUT_WIDTH+8:0] reconstructed_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
     output wire block_done
 );
 
@@ -51,20 +52,21 @@ module idct_2d #(
     // fixed point cosine values
     reg signed [9:0] cosine_vals [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q2.8
 
-    reg signed [26:0] sum_values [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
+    reg signed [RECONST_OUT_WIDTH-1:0] sum_values [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
 
-    reg signed [35:0] sum;
+    reg signed [RECONST_OUT_WIDTH+8:0] sum;
 
-    wire signed [DCT_OUT_WIDTH-1:0] nxt_reconstructed_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; 
-    reg  signed [DCT_OUT_WIDTH-1:0] reconstructed_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; 
+    wire signed [RECONST_OUT_WIDTH+8:0] nxt_reconstructed_block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; 
+    reg  signed [RECONST_OUT_WIDTH+8:0] reconstructed_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; 
 
     always_comb begin
         for (int u = 0; u < BLOCK_SIZE; u = u + 1) begin
             for (int v = 0; v < BLOCK_SIZE; v = v + 1) begin
                 alpha_u[u][v] = (u === 3'b000) ? root_one_over_n : root_two_over_n;
                 alpha_v[u][v] = (v === 3'b000) ? root_one_over_n : root_two_over_n;
+                // Q1.8 * Q1.8 * Q16.0 * Q2.8 * Q2.8 = Q22.32
                 sum_values[u][v] = alpha_u[u][v] * alpha_v[u][v] * dequantized_coeffs[u][v] * 
-                                   cosine_vals[x][u] * cosine_vals[y][v];       // 32 fraction bits
+                                   cosine_vals[x][u] * cosine_vals[y][v];     
             end
         end
 
@@ -95,7 +97,7 @@ module idct_2d #(
                 assign nxt_reconstructed_block[i][j] = reconstructed_block[i][j];
 
                 ff_en #(
-                    .WIDTH(DCT_OUT_WIDTH)
+                    .WIDTH(RECONST_OUT_WIDTH+9)
                 ) dct_ff (
                     .clk(clk),
                     .rst_n(rst_n),

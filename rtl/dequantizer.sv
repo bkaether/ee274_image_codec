@@ -1,10 +1,10 @@
 module dequantizer #(
     parameter BLOCK_SIZE = 8,
-    parameter DCT_OUT_WIDTH = 54
+    parameter COEFF_WIDTH = 9
 ) (
-    input  wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
+    input  wire signed [COEFF_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
 
-    output wire signed [DCT_OUT_WIDTH-1:0] dequantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
+    output wire signed [COEFF_WIDTH+6:0] dequantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
 );
 
     // rounded quantization matrix shift values

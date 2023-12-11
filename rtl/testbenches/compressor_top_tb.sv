@@ -4,7 +4,7 @@ module compressor_top_tb();
     reg start_img;
     reg signed [8:0] image [479:0][639:0];
 
-    reg signed [53:0] quantized_coeffs_out [479:0][639:0];
+    reg signed [8:0] quantized_coeffs_out [479:0][639:0];
     reg img_done;
 
     always #5 clk = ~clk;

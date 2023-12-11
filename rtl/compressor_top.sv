@@ -3,14 +3,15 @@ module compressor_top #(
     parameter IMG_COLS = 640,
     parameter BLOCK_SIZE = 8,
     parameter LOG2_BLOCK_SIZE = 3,
-    parameter DCT_OUT_WIDTH = 54
+    parameter DCT_OUT_WIDTH = 54,
+    parameter COEFF_WIDTH = 9
 ) (
     input  wire clk,
     input  wire rst_n,
     input  wire start_img,
     input  wire signed [8:0] image [IMG_ROWS-1:0][IMG_COLS-1:0], // Q9.0
 
-    output reg signed [DCT_OUT_WIDTH-1:0] quantized_coeffs_out [IMG_ROWS-1:0][IMG_COLS-1:0],
+    output reg signed [COEFF_WIDTH-1:0] quantized_coeffs_out [IMG_ROWS-1:0][IMG_COLS-1:0],
     output wire img_done
 );
 
@@ -45,7 +46,7 @@ module compressor_top #(
             for (j = 0; j < (NUM_BLOCKS_IN_ROW); j = j + 1) begin
 
                 wire signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q9.0
-                wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
+                wire signed [COEFF_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; 
 
                 for (ii = 0; ii < BLOCK_SIZE; ii = ii + 1) begin
                     for (jj = 0; jj < BLOCK_SIZE; jj = jj + 1) begin

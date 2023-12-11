@@ -10,7 +10,7 @@ def ndarray_to_mem(array, filename, form='08x'):
                 row.append(string)
             file.write('\t'.join(row) + '\n')
 
-def mem_to_ndarray(file_path, fractional_bits, rows, cols):
+def mem_to_ndarray(file_path, total_bits, fractional_bits, rows, cols):
     """
     Parses a .mem file and converts hexadecimal values to signed decimal values.
 
@@ -31,11 +31,11 @@ def mem_to_ndarray(file_path, fractional_bits, rows, cols):
             # Each line is a hexadecimal value
             hex_value = line.strip()
 
-            # Convert hexadecimal to signed integer (52 bits)
+            # Convert hexadecimal to signed integer
             # The mask is for 52 bits
-            mask = 0xFFFFFFFFFFFFF
+            mask = (1 << total_bits) - 1
             int_value = int(hex_value, 16)
-            if int_value & (1 << 51):  # if the sign bit (52nd bit) is set
+            if int_value & (1 << (total_bits - 1)):  # if the sign bit is set
                 int_value = -((~int_value + 1) & mask)  # two's complement
 
             # Convert to fixed point representation

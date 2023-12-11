@@ -6,11 +6,16 @@ block1_coeffs_file_path = "../memfiles/hw_output/b1_coeffs_out_hw.mem"
 full_coeffs_file_path = "../memfiles/hw_output/full_image_comp_out_hw.mem"
 dct_out_file_path = "../memfiles/hw_output/b1_comp_out_hw.mem"
 shift_file_path = "../memfiles/quantization.mem"
-fractional_bits = 0
-first_block_coeffs = mem_to_ndarray(block1_coeffs_file_path, fractional_bits, 8, 8)
-full_image_coeffs = mem_to_ndarray(full_coeffs_file_path, fractional_bits, 480, 640)
-first_block_dct = mem_to_ndarray(dct_out_file_path, 32, 8, 8)
+
+b1_reconstructed_file_path = "../memfiles/hw_output/b1_reconstructed_out_hw.mem"
+
+first_block_coeffs = mem_to_ndarray(block1_coeffs_file_path, 9, 0, 8, 8)
+full_image_coeffs = mem_to_ndarray(full_coeffs_file_path, 54, 0, 480, 640)
+first_block_dct = mem_to_ndarray(dct_out_file_path, 54, 32, 8, 8)
 shift_values = mem_2d_to_ndarray(shift_file_path, 8, 8)
+
+first_block_reconstructed = mem_to_ndarray(b1_reconstructed_file_path, 63, 32, 8, 8)
+
 np.set_printoptions(suppress=True, precision=4)
 image = cv2.imread('../image_data/raw/river.jpg', cv2.IMREAD_GRAYSCALE)
 
@@ -25,13 +30,17 @@ quantization_matrix = np.array([[16, 11, 10, 16, 24, 40, 51, 61],
 
 rounded_quantization_matrix = round_matrix(quantization_matrix)
 
-python_output = compress_block(image[0:8, 0:8], rounded_quantization_matrix)
+python_compressed = compress_block(image[0:8, 0:8], rounded_quantization_matrix)
+python_decompressed = decompress_block(python_compressed, rounded_quantization_matrix)
 # mse = np.mean((first_block_coeffs - python_output) ** 2)
 
 # print("\nRTL First Block DCT Output:\n", first_block_dct)
 # print("\nRTL shift values:\n", shift_values)
 print("\nRTL First Block Coeffs Output:\n", first_block_coeffs)
-print("\nPython First Block Output:\n", python_output)
+print("\nPython First Block Output:\n", python_compressed)
+
+print("\nRTL First Block Reconstructed Output:\n", first_block_reconstructed)
+print("\nPython First Block Reconstructed Output:\n", python_decompressed)
 
 # print(mse)
 # compressed_block = np.round(first_block_coeffs / rounded_quantization_matrix)
