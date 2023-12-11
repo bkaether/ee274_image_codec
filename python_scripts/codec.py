@@ -78,8 +78,3 @@ def decompress_image(coefficients, quantization_matrix):
             decompressed_block = decompress_block(compressed_block, quantization_matrix)
             decompressed_image[i:i+8, j:j+8] = np.clip(decompressed_block, 0, 255)
     return decompressed_image
-
-def compress_first_block(image):
-    block = image[0:8, 0:8]
-    dct_block = dct_2d(block)
-    return dct_block

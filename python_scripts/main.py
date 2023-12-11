@@ -20,8 +20,6 @@ quantization_matrix = np.array([[16, 11, 10, 16, 24, 40, 51, 61],
 rounded_quantization_matrix = round_matrix(quantization_matrix)
 
 np.set_printoptions(suppress=True, precision=4)
-first_dct_block = compress_first_block(image)
-print("\nCoefficients for First DCT Block:\n", first_dct_block)
 
 compressed, decompressed = process_image(image, quantization_matrix)
 
