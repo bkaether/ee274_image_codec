@@ -2,9 +2,9 @@ module dequantizer #(
     parameter BLOCK_SIZE = 8,
     parameter DCT_OUT_WIDTH = 54
 ) (
-    input signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
+    input  wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0],
 
-    output wire signed [DCT_OUT_WIDTH-1:0] idct_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
+    output wire signed [DCT_OUT_WIDTH-1:0] dequantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]
 );
 
     // rounded quantization matrix shift values
@@ -14,7 +14,7 @@ module dequantizer #(
         genvar i, j;
         for (i = 0; i < BLOCK_SIZE; i = i + 1) begin
             for (j = 0; j < BLOCK_SIZE; j = j + 1) begin
-                assign idct_block_out[i][j] = (quantized_coeffs[i][j] <<< shift_values[i][j]);
+                assign dequantized_coeffs[i][j] = (quantized_coeffs[i][j] <<< shift_values[i][j]);
             end
         end
     endgenerate

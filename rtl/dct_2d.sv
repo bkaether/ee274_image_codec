@@ -19,7 +19,7 @@ module dct_2d #(
 `define STATE_CALCULATING 2'b01
 `define STATE_DONE        2'b10
 
-// define values to be used for alpha_u and alpha_v from gold software model ( 8.8 fixed point)
+// define values to be used for alpha_u and alpha_v from gold software model ( 1.8 fixed point)
 wire [8:0] root_one_over_n;
 wire [8:0] root_two_over_n;
 assign root_one_over_n = 9'b0_01011011; // = ~0.3536
@@ -68,7 +68,7 @@ reg  signed [DCT_OUT_WIDTH-1:0] dct_block     [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; 
 always_comb begin
     for (int x = 0; x < BLOCK_SIZE; x = x + 1) begin
         for (int y = 0; y < BLOCK_SIZE; y = y + 1) begin
-            sum_values[x][y] = block[x][y] * cosine_vals[x][u] * cosine_vals[y][v]; // TODO: check fixed point bit width reqs
+            sum_values[x][y] = block[x][y] * cosine_vals[x][u] * cosine_vals[y][v];
         end
     end
 
