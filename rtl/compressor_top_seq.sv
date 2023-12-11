@@ -22,6 +22,12 @@ module compressor_top_seq #(
     localparam NUM_BLOCKS_IN_ROW = (IMG_COLS >> LOG2_BLOCK_SIZE);
     localparam NUM_BLOCKS_IN_COL = (IMG_ROWS >> LOG2_BLOCK_SIZE);
 
+    // struct for creating block instance data
+    typedef struct {
+        logic signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
+        logic signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
+    } block_data;
+
     // state signals
     wire [1:0] nxt_state;
     reg  [1:0] state;
@@ -45,8 +51,6 @@ module compressor_top_seq #(
     genvar i, j, ii, jj;
     genvar x, y, xx, yy;
 
-    // wire signed [DCT_OUT_WIDTH-1:0] nxt_quantized_coeffs [IMG_ROWS-1:0][IMG_COLS-1:0];
-
     // flops for final image
     generate
         for (x = 0; x < NUM_BLOCKS_IN_COL; x = x + 1) begin
@@ -54,17 +58,27 @@ module compressor_top_seq #(
                 for (xx = 0; xx < BLOCK_SIZE; xx = xx + 1) begin
                     for (yy = 0; yy < BLOCK_SIZE; yy = yy + 1) begin
 
-                        ff_en #(
-                            .WIDTH(DCT_OUT_WIDTH)
-                        ) dct_ff (
-                            .clk(clk),
-                            .rst_n(rst_n),
-                            .en(x == row_ctr_count),
-                            .rst_val('0),
-                            .D(cblock_scope.quantized_coeffs[y][xx][yy]),
+                        always_ff @(posedge clk, negedge rst_n) begin
+                            if (!rst_n) begin
+                                quantized_coeffs_out[(x*BLOCK_SIZE) + xx][(y*BLOCK_SIZE)+yy] = '0;
+                            end else if (x == row_ctr_count) begin
+                                quantized_coeffs_out[(x*BLOCK_SIZE) + xx][(y*BLOCK_SIZE)+yy] <= row_block_data[y].quantized_coeffs[xx][yy];
+                            end else begin
+                                quantized_coeffs_out[(x*BLOCK_SIZE) + xx][(y*BLOCK_SIZE)+yy] <= quantized_coeffs_out[(x*BLOCK_SIZE) + xx][(y*BLOCK_SIZE)+yy];
+                            end
+                        end
 
-                            .Q(quantized_coeffs_out[(x*BLOCK_SIZE) + xx][(y*BLOCK_SIZE)+yy])
-                        );
+                        // ff_en #(
+                        //     .WIDTH(DCT_OUT_WIDTH)
+                        // ) dct_ff (
+                        //     .clk(clk),
+                        //     .rst_n(rst_n),
+                        //     .en(x == row_ctr_count),
+                        //     .rst_val('0),
+                        //     .D(row_block_data[y].quantized_coeffs[xx][yy]),
+
+                        //     .Q(quantized_coeffs_out[(x*BLOCK_SIZE) + xx][(y*BLOCK_SIZE)+yy])
+                        // );
                     end
                 end
             end
@@ -74,18 +88,15 @@ module compressor_top_seq #(
     // dct block cores
     wire start_blocks;
     wire [NUM_BLOCKS_IN_ROW-1:0] block_done;
+    block_data row_block_data[NUM_BLOCKS_IN_ROW-1:0];
 
     assign start_blocks = (state === `STATE_CALCULATING);
 
     generate
-        for (j = 0; j < (NUM_BLOCKS_IN_ROW); j = j + 1) begin : cblock_scope
-
-            wire signed [8:0] block [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0], // Q9.0
-            wire signed [DCT_OUT_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0]; // Q18.16 + Q1.8 + Q1.8 = Q20.32
-
+        for (j = 0; j < (NUM_BLOCKS_IN_ROW); j = j + 1) begin
             for (ii = 0; ii < BLOCK_SIZE; ii = ii + 1) begin
                 for (jj = 0; jj < BLOCK_SIZE; jj = jj + 1) begin
-                    assign block[ii][jj] = image[(row_ctr_count*BLOCK_SIZE) + ii][(j*BLOCK_SIZE)+jj];
+                    assign row_block_data[j].block[ii][jj] = image[(row_ctr_count*BLOCK_SIZE) + ii][(j*BLOCK_SIZE)+jj];
                 end
             end
 
@@ -96,9 +107,9 @@ module compressor_top_seq #(
                 .clk(clk),
                 .rst_n(rst_n),
                 .start_block(start_blocks),
-                .block(block),
+                .block(row_block_data[j].block),
 
-                .quantized_coeffs(quantized_coeffs),
+                .quantized_coeffs(row_block_data[j].quantized_coeffs),
                 .block_done(block_done[j])
             );
         end
