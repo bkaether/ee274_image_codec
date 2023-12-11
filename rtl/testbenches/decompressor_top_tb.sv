@@ -20,7 +20,7 @@ module decompressor_top_tb();
     );
 
     initial begin
-        $readmemh("full_image_comp_out.mem", image_quantized_coeffs);
+        $readmemh("full_image_comp_out_hw.mem", image_quantized_coeffs);
         clk <= 0;
         rst_n = 1;
         start_img <= 0;

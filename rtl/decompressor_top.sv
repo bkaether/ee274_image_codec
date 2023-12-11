@@ -45,7 +45,7 @@ module decompressor_top #(
         for (i = 0; i < (NUM_BLOCKS_IN_COL); i = i + 1) begin
             for (j = 0; j < (NUM_BLOCKS_IN_ROW); j = j + 1) begin
 
-                wire signed [RECONST_OUT_WIDTH+8:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
+                wire signed [COEFF_WIDTH-1:0] quantized_coeffs [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
                 wire signed [RECONST_OUT_WIDTH+8:0] reconstructed_block_out [BLOCK_SIZE-1:0][BLOCK_SIZE-1:0];
 
                 for (ii = 0; ii < BLOCK_SIZE; ii = ii + 1) begin
