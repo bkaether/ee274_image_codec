@@ -8,13 +8,16 @@ dct_out_file_path = "../memfiles/hw_output/b1_comp_out_hw.mem"
 shift_file_path = "../memfiles/quantization.mem"
 
 b1_reconstructed_file_path = "../memfiles/hw_output/b1_reconstructed_out_hw.mem"
+full_hw_reconstruction_path = "../memfiles/hw_output/full_image_reconstructed_hw.mem"
 
 first_block_coeffs = mem_to_ndarray(block1_coeffs_file_path, 9, 0, 8, 8)
-full_image_coeffs = mem_to_ndarray(full_coeffs_file_path, 54, 0, 480, 640)
+full_image_coeffs = mem_to_ndarray(full_coeffs_file_path, 9, 0, 480, 640)
 first_block_dct = mem_to_ndarray(dct_out_file_path, 54, 32, 8, 8)
 shift_values = mem_2d_to_ndarray(shift_file_path, 8, 8)
 
 first_block_reconstructed = mem_to_ndarray(b1_reconstructed_file_path, 63, 32, 8, 8)
+full_image_reconstructed = mem_to_ndarray(full_hw_reconstruction_path, 63, 32, 480, 640)
+
 
 np.set_printoptions(suppress=True, precision=4)
 image = cv2.imread('../image_data/raw/river.jpg', cv2.IMREAD_GRAYSCALE)
@@ -47,3 +50,4 @@ print("\nPython First Block Reconstructed Output:\n", python_decompressed)
 # decompressed_block = decompress_block(compressed_block, quantization_matrix)
 decompressed_image = decompress_image(full_image_coeffs, rounded_quantization_matrix)
 cv2.imwrite('../image_data/decompressed/hw/river.jpg', decompressed_image)
+cv2.imwrite('../image_data/decompressed/hw/river_full_hw.jpg', full_image_reconstructed)
