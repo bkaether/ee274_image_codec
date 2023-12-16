@@ -29,14 +29,14 @@ compressed_rounded, decompressed_rounded = process_image(image, rounded_quantiza
 # measure the time of each step separately
 # compression
 start = time.time()
-comp_round_separate = compress_image(image, rounded_quantization_matrix)
+comp_round_separate = compress_image(image, quantization_matrix)
 end = time.time()
 compression_time_ms = (end - start)*1000
 print("\nPython CV2 Compression takes ", compression_time_ms, " ms to complete")
 
 #decompression
 start = time.time()
-decomp_round_separate = decompress_image(comp_round_separate, rounded_quantization_matrix)
+decomp_round_separate = decompress_image(comp_round_separate, quantization_matrix)
 end = time.time()
 decompression_time_ms = (end - start)*1000
 print("\nPython CV2 Decompression takes ", decompression_time_ms, " ms to complete")
@@ -50,4 +50,4 @@ print("\nMSE between raw and reconstructed image with rounded matrix:\n", mse_ro
 # Save or display the decompressed image
 cv2.imwrite('../image_data/decompressed/river.jpg', decompressed)
 cv2.imwrite('../image_data/decompressed/river_rounded.jpg', decompressed_rounded)
-cv2.imwrite('../image_data/decompressed/river_rounded_separate.jpg', decomp_round_separate)
+# cv2.imwrite('../image_data/decompressed/river_rounded_separate.jpg', decomp_round_separate)
