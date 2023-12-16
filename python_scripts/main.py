@@ -50,4 +50,3 @@ print("\nMSE between raw and reconstructed image with rounded matrix:\n", mse_ro
 # Save or display the decompressed image
 cv2.imwrite('../image_data/decompressed/river.jpg', decompressed)
 cv2.imwrite('../image_data/decompressed/river_rounded.jpg', decompressed_rounded)
-# cv2.imwrite('../image_data/decompressed/river_rounded_separate.jpg', decomp_round_separate)
