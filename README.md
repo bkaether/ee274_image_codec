@@ -32,4 +32,4 @@ To briefly explain the images in the image_data folder, image_data/raw/river.jpg
 image_data/decompressed/river_rounded.jpg is the full software reconstruction using the rounded quantization matrix that we use in hardware, image_data/decompressed/hw/river.jpg is a reconstruction resulting from compression in hardware
 and decompression in software, and image_data/decompressed/hw/river_full_hw.jpg is the reconstruction that results from both hardware compression and decompression.
 
-The full final report is located in the repo. It is called EE274_Final_Report.
+The full final report is located in the repo. It is called EE274_Final_Report.pdf.
