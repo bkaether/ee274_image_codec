@@ -15,6 +15,8 @@ the inverse discrete cosine transform (IDCT)
 
 Here is the end to end process for getting the reconstructed image out of our hardware design to allow the results to be reproduced (requires vivado or another form of running verilog testbenches)
 
+* Install the python CV2 library (pip install opencv-python) and numpy
+
 * First, run the mem_gen.py python script to generate all the necessary memory files in the right format, so that we can load the correct data into the design. This script will generate memory files for the input image data,
   the fixed point cosine values, and the rounded quantization matrix shift values.
 
