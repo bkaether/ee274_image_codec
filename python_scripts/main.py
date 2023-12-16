@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import time
 from utils import *
 from codec import *
 
@@ -25,14 +26,26 @@ compressed, decompressed = process_image(image, quantization_matrix)
 
 compressed_rounded, decompressed_rounded = process_image(image, rounded_quantization_matrix)
 
+# measure the time of each step separately
+# compression
+start = time.time()
 comp_round_separate = compress_image(image, rounded_quantization_matrix)
+end = time.time()
+compression_time_ms = (end - start)*1000
+print("\nPython CV2 Compression takes ", compression_time_ms, " ms to complete")
+
+#decompression
+start = time.time()
 decomp_round_separate = decompress_image(comp_round_separate, rounded_quantization_matrix)
+end = time.time()
+decompression_time_ms = (end - start)*1000
+print("\nPython CV2 Decompression takes ", decompression_time_ms, " ms to complete")
 
 mse = np.mean((image - decompressed) ** 2)
 mse_rounded = np.mean((image - decompressed_rounded) ** 2)
 
-# print("\nMSE between raw and reconstructed image with normal matrix:\n", mse)
-# print("\nMSE between raw and reconstructed image with rounded matrix:\n", mse_rounded)
+print("\nMSE between raw and reconstructed image with normal matrix:\n", mse)
+print("\nMSE between raw and reconstructed image with rounded matrix:\n", mse_rounded)
 
 # Save or display the decompressed image
 cv2.imwrite('../image_data/decompressed/river.jpg', decompressed)
